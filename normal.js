@@ -4,9 +4,9 @@
 var objs, objs1;
 var starindex
 var gayindex;
+var combinedText = "";
 $(document).ready(async()=>{
-  await getdata();
-  
+  await combineTextFiles()
   $("#loadmore").click(async()=>{
     $("#loadmore").html("loading.")
     for (let index = 0; index < 6; index++) {
@@ -20,6 +20,26 @@ $(document).ready(async()=>{
   });
 
 })
+function combineTextFiles() {
+  const fileNames = ['hi.txt', 'hi2.txt', 'hi3.txt'];
+  let combinedText = '';
+  $.when(
+    $.get(fileNames[0]),
+    $.get(fileNames[1]),
+    $.get(fileNames[2]),
+    $.get("raw_profile.csv")
+  ).then(function (text1, text2, text3,text4) {
+    objs = d3.csvParse(text4[0]);
+    starindex = Math.floor(Math.random() * objs.length)
+    
+    combinedText = text1[0] + text2[0] + text3[0];
+    objs1 = d3.tsvParse(combinedText); 
+    gayindex = Math.floor(Math.random() * objs1.length)
+    for (let index = 0; index < 5; index++) {
+      newcontent();
+    }footer();footerlink()
+  });
+}
 $(document).on("click", "button", function(e){ //search
   var txt = $(this).text().trim();
   var search = $("#searchon").val().trim();    
@@ -41,22 +61,6 @@ $(document).on("click", "button", function(e){ //search
       
     }
   });
-
-  
-
-
-function getdata(){
-  $.get(" raw_profile.csv", (data)=>{objs = d3.csvParse(data);
-    starindex = Math.floor(Math.random() * objs.length)});
-  $.get(" hi.txt", (data)=>{objs1 = d3.tsvParse(data); console.log(objs1)
-    gayindex = Math.floor(Math.random() * objs1.length)
-
-for (let index = 0; index < 5; index++) {
-    newcontent();
-    }footer();footerlink()
-
-  });
-}
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
